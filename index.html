@@ -8,11 +8,11 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         * {
-            font-family: 'Raleway', sans-serif;
+            font-family: 'Playfair Display', serif;
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -20,10 +20,10 @@
         :root {
             --color-text-inverse: #fff;
             --ease-transform: cubic-bezier(0.22, 1, 0.36, 1);
-            --logo-size: 10vw; /* Masaüstü için standart logo boyutu */
-            --logo-size-mobile: 20vw; /* Mobil için standart logo boyutu */
-            --logo-size-first: 8vw; /* İlk slayt için daha küçük logo (masaüstü) */
-            --logo-size-first-mobile: 16vw; /* İlk slayt için daha küçük logo (mobil) */
+            --logo-size: 10vw;
+            --logo-size-mobile: 20vw;
+            --logo-size-first: 16vw;
+            --logo-size-first-mobile: 26vw;
         }
 
         body {
@@ -138,47 +138,60 @@
             background: #fff;
         }
         .swiper-slide[data-swiper-slide-index="1"] {
-            background: #f1f1f1;
-            color: #1a1a1a;
+            background: #222;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: clamp(2%, 5vw, 5%);
+            font-family: 'Playfair Display', serif;
         }
-        .photo-album {
+        .gallery {
+            display: flex;
+            flex-wrap: nowrap;
             width: 100%;
-            max-width: 90%;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 5px;
             overflow: hidden;
+            max-width: 1300px;
+            margin: auto;
         }
-        .photo-item {
+        .gallery__strip__wrapper {
+            flex: 0 0 33.333%;
+            justify-content: flex-end;
+            background: #222;
+            border-right: 2px solid #333;
             position: relative;
             overflow: hidden;
         }
-        .photo-item img {
+        .photo {
+            position: relative;
+            text-align: right;
+            padding-bottom: 1.5rem;
+            cursor: pointer;
+        }
+        .photo__image img {
+            width: 90%;
+            transform: translateX(30%);
+            transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1) 0.2s;
+        }
+        .photo__name {
+            text-transform: uppercase;
+            font-size: clamp(16px, 4vw, 24px);
+            letter-spacing: 2px;
+            color: transparent;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: white;
+            margin-top: -15px;
+            transition: color 0.4s ease-in-out 0.4s;
+            position: relative;
             width: 100%;
-            height: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            transition: transform 0.4s ease;
         }
-        .photo-item:hover img {
-            transform: scale(1.05);
+        .photo:hover .photo__image img,
+        .photo.active .photo__image img {
+            transform: translateX(0%);
         }
-        .photo-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.45);
+        .photo:hover .photo__name,
+        .photo.active .photo__name {
             color: #fff;
-            text-align: center;
-            padding: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            letter-spacing: 0.03em;
         }
         .modal {
             display: none;
@@ -216,7 +229,6 @@
             height: 45px;
             background: rgba(255, 255, 255, 0.15);
             border: none;
-            border-radius: none;
             cursor: pointer;
             display: flex;
             justify-content: center;
@@ -360,6 +372,41 @@
         .footer-column a:hover {
             text-decoration: underline;
         }
+        .gallery__strip.one {
+            animation: 12s move-it ease alternate infinite 0s;
+            transform: translateY(2%);
+        }
+        .gallery__strip.three {
+            animation: 14s move-it ease alternate infinite 0s;
+            transform: translateY(2%);
+        }
+        .gallery__strip.two {
+            animation: 10s move-it-2 ease alternate infinite 0s;
+            transform: translateY(-50%);
+        }
+        .gallery__strip.four {
+            animation: 13s move-it-2 ease alternate infinite 0s;
+            transform: translateY(-50%);
+        }
+        .gallery__strip:hover {
+            animation-play-state: paused;
+        }
+        @keyframes move-it {
+            0%, 90%, 100% {
+                transform: translateY(2%);
+            }
+            45% {
+                transform: translateY(-50%);
+            }
+        }
+        @keyframes move-it-2 {
+            0%, 90%, 100% {
+                transform: translateY(-50%);
+            }
+            45% {
+                transform: translateY(5%);
+            }
+        }
         @media (max-width: 1024px) {
             .logo {
                 width: var(--logo-size-mobile);
@@ -370,16 +417,16 @@
             .logo-footer-center, .footer-logo img {
                 width: var(--logo-size-mobile);
             }
-            .photo-album {
-                grid-template-columns: 1fr;
-                grid-template-rows: repeat(6, auto);
+            .gallery__strip__wrapper {
+                flex: 0 0 33.333%;
             }
-            .hamburger-btn {
-                top: 1rem;
-                right: 1rem;
+            .photo__image img {
+                width: 90%;
+                transform: translateX(30%);
             }
-            .footer-logo {
-                margin-top: 1.5rem;
+            .photo:hover .photo__image img,
+            .photo.active .photo__image img {
+                transform: translateX(0%);
             }
         }
         @media (max-width: 768px) {
@@ -398,12 +445,15 @@
             .logo-footer-center, .footer-logo img {
                 width: var(--logo-size-mobile);
             }
-            .photo-album {
-                grid-template-columns: 1fr;
-                grid-template-rows: repeat(6, auto);
+            .gallery__strip__wrapper {
+                flex: 0 0 33.333%;
             }
-            .footer-logo {
-                margin-top: 1rem;
+            .photo {
+                padding-bottom: 1rem;
+            }
+            .photo__name {
+                font-size: clamp(14px, 3.5vw, 20px);
+                margin-top: -10px;
             }
         }
         @media (max-width: 480px) {
@@ -422,12 +472,23 @@
             .slide-overlay h2, .slide-overlay h3 {
                 font-size: clamp(0.5rem, 2vw, 0.6rem);
             }
-            .photo-album img {
-                aspect-ratio: 1 / 1;
-                height: auto;
+            .photo {
+                padding-bottom: 0.75rem;
             }
-            .footer-logo {
-                margin-top: 0.5rem;
+            .photo__name {
+                font-size: clamp(12px, 3vw, 16px);
+                margin-top: -8px;
+            }
+            .gallery__strip__wrapper {
+                flex: 0 0 33.333%;
+            }
+            .photo__image img {
+                width: 90%;
+                transform: translateX(30%);
+            }
+            .photo:hover .photo__image img,
+            .photo.active .photo__image img {
+                transform: translateX(0%);
             }
         }
     </style>
@@ -450,9 +511,119 @@
                     </div>
                 </div>
                 <div class="swiper-slide" data-swiper-slide-index="1" data-logo-color="white">
-                    <div class="photo-item">
-                        <img src="resim2.jpeg" alt="Davetten Kare" onclick="openModal('resim2.jpeg')">
-                        <div class="photo-caption">Davetten Kare</div>
+                    <div class="gallery">
+                        <div class="gallery__strip__wrapper">
+                            <div class="gallery__strip one">
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-kyoto.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-kyoto.jpeg" alt="Kyoto">
+                                    </div>
+                                    <div class="photo__name">Kyoto</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-austria.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-austria.jpeg" alt="Halstatt">
+                                    </div>
+                                    <div class="photo__name">Halstatt</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-peru.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-peru.jpeg" alt="Peru">
+                                    </div>
+                                    <div class="photo__name">Peru</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-rio.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-rio.jpeg" alt="Rio">
+                                    </div>
+                                    <div class="photo__name">Rio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery__strip__wrapper">
+                            <div class="gallery__strip two">
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-italy.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-italy.jpeg" alt="Italy">
+                                    </div>
+                                    <div class="photo__name">Italy</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-osaka.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-osaka.jpeg" alt="Osaka">
+                                    </div>
+                                    <div class="photo__name">Osaka</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-bali.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-bali.jpeg" alt="Bali">
+                                    </div>
+                                    <div class="photo__name">Bali</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-paris2.jpg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-paris2.jpg" alt="Paris">
+                                    </div>
+                                    <div class="photo__name">Paris</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery__strip__wrapper">
+                            <div class="gallery__strip three">
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-cusco.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-cusco.jpeg" alt="Cusco">
+                                    </div>
+                                    <div class="photo__name">Cusco</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-rome.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-rome.jpeg" alt="Rome">
+                                    </div>
+                                    <div class="photo__name">Rome</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-paris.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-paris.jpeg" alt="Paris">
+                                    </div>
+                                    <div class="photo__name">Paris</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-bali2.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-bali2.jpeg" alt="Bali">
+                                    </div>
+                                    <div class="photo__name">Bali</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery__strip__wrapper">
+                            <div class="gallery__strip four">
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-milan.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-milan.jpeg" alt="Milan">
+                                    </div>
+                                    <div class="photo__name">Milan</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-budapest.jpg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-budapest.jpg" alt="Budapest">
+                                    </div>
+                                    <div class="photo__name">Budapest</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-vienna.jpg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-vienna.jpg" alt="Vienna">
+                                    </div>
+                                    <div class="photo__name">Vienna</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-mexico.jpg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-mexico.jpg" alt="Mexico">
+                                    </div>
+                                    <div class="photo__name">Mexico</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="swiper-slide" data-swiper-slide-index="2" data-logo-color="white">
@@ -465,7 +636,7 @@
                     </div>
                 </div>
                 <div class="swiper-slide" data-swiper-slide-index="3" data-logo-color="white">
-                    <img src="resim2.jpeg" alt="Resim 2 - Lüks Etkinlik">
+                    <img src="davetiye.png" alt="Resim 2 - Lüks Etkinlik">
                     <div class="slide-overlay">
                         <h2>Anlarınızı Efsaneye Dönüştürüyoruz</h2>
                         <h3>Her anınızı efsanevi bir hikayeye çeviren sihirli dokunuşlar sunuyoruz.</h3>
@@ -534,6 +705,9 @@
                     const logoColor = activeSlide.getAttribute('data-logo-color');
                     const slideIndex = parseInt(activeSlide.getAttribute('data-swiper-slide-index'));
                     updateLogoPosition(slideIndex, logoColor);
+                    if (slideIndex === 1) {
+                        resetGalleryAnimations();
+                    }
                 },
                 slideChange: function () {
                     const activeSlide = this.slides[this.activeIndex];
@@ -550,6 +724,9 @@
                             activeOverlay.style.opacity = '1';
                             activeOverlay.style.transform = 'translateY(0)';
                         }, 100);
+                    }
+                    if (slideIndex === 1) {
+                        resetGalleryAnimations();
                     }
                 }
             }
@@ -577,8 +754,30 @@
             }
         }
 
+        function resetGalleryAnimations() {
+            const strips = document.querySelectorAll('.gallery__strip');
+            strips.forEach(strip => {
+                strip.style.animation = 'none';
+                void strip.offsetWidth; // Trigger reflow to restart animation
+                if (strip.classList.contains('one')) {
+                    strip.style.animation = '12s move-it ease alternate infinite 0s';
+                } else if (strip.classList.contains('two')) {
+                    strip.style.animation = '10s move-it-2 ease alternate infinite 0s';
+                } else if (strip.classList.contains('three')) {
+                    strip.style.animation = '14s move-it ease alternate infinite 0s';
+                } else if (strip.classList.contains('four')) {
+                    strip.style.animation = '13s move-it-2 ease alternate infinite 0s';
+                }
+            });
+        }
+
         window.addEventListener('load', () => {
             document.body.style.opacity = '1';
+            const activeSlide = swiper.slides[swiper.activeIndex];
+            const slideIndex = parseInt(activeSlide.getAttribute('data-swiper-slide-index'));
+            if (slideIndex === 1) {
+                resetGalleryAnimations();
+            }
         });
 
         let isScrolling = false;
@@ -612,6 +811,9 @@
             modal.style.display = 'none';
             modalContent.src = '';
             modalContent.innerHTML = '';
+            document.querySelectorAll('.photo').forEach(photo => {
+                photo.classList.remove('active');
+            });
         }
 
         document.getElementById('modal').addEventListener('click', (e) => {
@@ -625,6 +827,13 @@
             const menu = document.querySelector('.menu');
             hamburgerBtn.classList.toggle('active');
             menu.classList.toggle('active');
+        }
+
+        function togglePhotoActive(element) {
+            document.querySelectorAll('.photo').forEach(photo => {
+                photo.classList.remove('active');
+            });
+            element.classList.add('active');
         }
     </script>
 </body>
