@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CLICK by Daphne Behar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;700&family=Fira+Sans:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --color-text-inverse: #fff;
+            --ease-transform: cubic-bezier(0.22, 1, 0.36, 1);
+            --logo-size: 10vw;
+            --logo-size-mobile: 20vw;
+            --logo-size-first: 8vw;
+            --logo-size-first-mobile: 16vw;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            color: var(--color-text-inverse);
+            overflow-x: hidden;
+            background-color: #f1f1f1;
+            min-height: 100vh;
+        }
+        .slider-container {
+            width: 100%;
+            height: 100vh;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        .logo {
+            position: absolute;
+            z-index: 10;
+            width: var(--logo-size);
+            height: auto;
+            transition: all 0.5s ease;
+        }
+        .logo-default {
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .logo-first-slide {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: var(--logo-size-first);
+        }
+        .logo-footer-center {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: var(--logo-size);
+            filter: brightness(0) invert(1);
+        }
+        .footer-logo img {
+            width: var(--logo-size);
+            height: auto;
+            filter: brightness(0) invert(1);
+        }
+        .swiper {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .swiper-slide {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+        .swiper-slide video,
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .slide-overlay {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.5s ease, transform 0.5s var(--ease-transform);
+            text-transform: uppercase;
+        }
+        .swiper-slide-active .slide-overlay {
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeSlideUp 1s ease-out;
+        }
+        @keyframes fadeSlideUp {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            0% { transform: translateY(-30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .slide-overlay h2 {
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: 0.08em;
+        }
+        .slide-overlay h3 {
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+            font-weight: 400;
+            margin: 0;
+            letter-spacing: 0.05em;
+        }
+        .swiper-pagination-bullet {
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0.5;
+        }
+        .swiper-pagination-bullet-active {
+            opacity: 1;
+            background: #fff;
+        }
+        .swiper-slide[data-swiper-slide-index="1"] {
+            background: #222;
+            color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(2%, 5vw, 5%);
+            font-family: 'Fira Sans', sans-serif;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            overflow: hidden;
+            max-width: 1300px;
+            margin: auto;
+        }
+        .gallery__strip__wrapper {
+            flex: 0 0 100%;
+            justify-content: flex-end;
+            background: #222;
+            border-right: 2px solid #333;
+            position: relative;
+        }
+        .photo {
+            position: relative;
+            text-align: right;
+            padding-bottom: 1.5rem;
+            cursor: pointer;
+        }
+        .photo__image img {
+            width: 100%;
+            transform: translateX(0);
+            transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1) 0.2s;
+        }
+        .photo__name {
+            text-transform: uppercase;
+            font-size: clamp(16px, 4vw, 24px);
+            letter-spacing: 2px;
+            color: transparent;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: white;
+            margin-top: -15px;
+            transition: color 0.4s ease-in-out 0.4s;
+            position: relative;
+            width: 100%;
+        }
+        .photo:hover .photo__image img,
+        .photo.active .photo__image img {
+            transform: translateX(-10%);
+        }
+        .photo:hover .photo__name,
+        .photo.active .photo__name {
+            color: #fff;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .hamburger-btn {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 1001;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        .hamburger-btn:hover {
+            transform: scale(1.08);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .hamburger-btn span,
+        .hamburger-btn span::before,
+        .hamburger-btn span::after {
+            display: block;
+            position: absolute;
+            width: 22px;
+            height: 2px;
+            background-color: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .hamburger-btn span::before {
+            content: "";
+            top: -7px;
+        }
+        .hamburger-btn span::after {
+            content: "";
+            top: 7px;
+        }
+        .hamburger-btn.active span {
+            background-color: transparent;
+        }
+        .hamburger-btn.active span::before {
+            top: 0;
+            transform: rotate(45deg);
+        }
+        .hamburger-btn.active span::after {
+            top: 0;
+            transform: rotate(-45deg);
+        }
+        .menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 2rem;
+            box-sizing: border-box;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        .menu.active {
+            display: block;
+            transform: translateX(0);
+        }
+        .menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .menu-content {
+            color: #fff;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        .menu-content h4 {
+            margin: 1rem 0 0.5rem;
+            font-weight: 700;
+        }
+        .menu-content a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+        .menu-content a:hover {
+            text-decoration: underline;
+        }
+        .footer-slide .hamburger-btn {
+            display: none;
+        }
+        .footer-slide {
+            background-color: #2a2a2a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(1rem, 3vw, 2rem);
+            font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+            letter-spacing: 0.02em;
+            min-height: 100vh;
+        }
+        .footer-content {
+            width: 100%;
+            max-width: clamp(300px, 80%, 600px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 clamp(0.5rem, 2vw, 1rem);
+        }
+        .footer-logo {
+            margin-top: 2rem;
+            margin-bottom: clamp(1rem, 2vw, 2rem);
+        }
+        .footer-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 0;
+        }
+        .footer-column {
+            width: 100%;
+            padding: 0;
+            margin-bottom: clamp(0.5rem, 1.5vw, 1.5rem);
+        }
+        .footer-column h4 {
+            margin: 0 0 clamp(0.25rem, 1vw, 0.5rem) 0;
+            font-weight: 700;
+        }
+        .footer-column a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            margin-bottom: clamp(0.25rem, 0.5vw, 0.5rem);
+            font-weight: 400;
+            font-size: 1rem;
+        }
+        .footer-column a:hover {
+            text-decoration: underline;
+        }
+        @media (min-width: 500px) {
+            .gallery__strip__wrapper {
+                flex: 0 0 50%;
+            }
+        }
+        @media (min-width: 950px) {
+            .gallery {
+                height: 100vh;
+            }
+            .gallery__strip.one {
+                animation: 60s move-it ease alternate infinite 5s;
+                transform: translateY(2%);
+            }
+            .gallery__strip.three {
+                animation: 70s move-it ease alternate infinite 6s;
+                transform: translateY(2%);
+            }
+            .gallery__strip.two {
+                animation: 58s move-it-2 ease alternate infinite 5s;
+                transform: translateY(-50%);
+            }
+            .gallery__strip.four {
+                animation: 65s move-it-2 ease alternate infinite 5.5s;
+                transform: translateY(-50%);
+            }
+            .gallery__strip:hover {
+                animation-play-state: paused;
+            }
+            .gallery__strip__wrapper {
+                flex: 0 0 25%;
+            }
+            .photo__image img {
+                width: 90%;
+                transform: translateX(30%);
+            }
+            .photo:hover .photo__image img,
+            .photo.active .photo__image img {
+                transform: translateX(0%);
+            }
+        }
+        @keyframes move-it {
+            0%, 90%, 100% {
+                transform: translateY(2%);
+            }
+            45% {
+                transform: translateY(-50%);
+            }
+        }
+        @keyframes move-it-2 {
+            0%, 90%, 100% {
+                transform: translateY(-50%);
+            }
+            45% {
+                transform: translateY(5%);
+            }
+        }
+        @media (max-width: 1024px) {
+            .logo {
+                width: var(--logo-size-mobile);
+            }
+            .logo-first-slide {
+                width: var(--logo-size-first-mobile);
+            }
+            .logo-footer-center, .footer-logo img {
+                width: var(--logo-size-mobile);
+            }
+            .gallery__strip__wrapper {
+                flex: 0 0 50%;
+            }
+        }
+        @media (max-width: 768px) {
+            .logo {
+                width: var(--logo-size-mobile);
+            }
+            .logo-first-slide {
+                width: var(--logo-size-first-mobile);
+            }
+            .logo-default {
+                top: 1rem;
+                right: 1rem;
+                left: auto;
+                transform: none;
+            }
+            .logo-footer-center, .footer-logo img {
+                width: var(--logo-size-mobile);
+            }
+            .gallery__strip__wrapper {
+                flex: 0 0 100%;
+            }
+            .photo {
+                padding-bottom: 1rem;
+            }
+            .photo__name {
+                font-size: clamp(14px, 3.5vw, 20px);
+                margin-top: -10px;
+            }
+        }
+        @media (max-width: 480px) {
+            .logo {
+                width: var(--logo-size-mobile);
+            }
+            .logo-first-slide {
+                width: var(--logo-size-first-mobile);
+            }
+            .logo-footer-center, .footer-logo img {
+                width: var(--logo-size-mobile);
+            }
+            .slide-overlay {
+                bottom: 1.5rem;
+            }
+            .slide-overlay h2, .slide-overlay h3 {
+                font-size: clamp(0.5rem, 2vw, 0.6rem);
+            }
+            .photo {
+                padding-bottom: 0.75rem;
+            }
+            .photo__name {
+                font-size: clamp(12px, 3vw, 16px);
+                margin-top: -8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <img src="logo.png" alt="CLICK by DAPHNE BEHAR Logo" class="logo logo-first-slide" id="main-logo">
+        <button class="hamburger-btn" onclick="toggleMenu()">
+            <span></span>
+        </button>
+        <div class="swiper" direction="vertical">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" data-swiper-slide-index="0" data-logo-color="white">
+                    <video autoplay loop muted playsinline>
+                        <source src="intro1.mp4" type="video/mp4">
+                    </video>
+                    <div class="slide-overlay">
+                        <h2>Hayallerinizi Gerçeğe Dönüştüren Zarafet</h2>
+                        <h3>Her etkinliğinizi eşsiz bir sanat eserine çeviriyoruz.</h3>
+                    </div>
+                </div>
+                <div class="swiper-slide" data-swiper-slide-index="1" data-logo-color="white">
+                    <div class="gallery">
+                        <div class="gallery__strip__wrapper">
+                            <div class="gallery__strip one">
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-kyoto.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-kyoto.jpeg" alt="Kyoto">
+                                    </div>
+                                    <div class="photo__name">Kyoto</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-austria.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-austria.jpeg" alt="Halstatt">
+                                    </div>
+                                    <div class="photo__name">Halstatt</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-peru.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-peru.jpeg" alt="Peru">
+                                    </div>
+                                    <div class="photo__name">Peru</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-rio.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-rio.jpeg" alt="Rio">
+                                    </div>
+                                    <div class="photo__name">Rio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery__strip__wrapper">
+                            <div class="gallery__strip two">
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-italy.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-italy.jpeg" alt="Italy">
+                                    </div>
+                                    <div class="photo__name">Italy</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-osaka.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-osaka.jpeg" alt="Osaka">
+                                    </div>
+                                    <div class="photo__name">Osaka</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-bali.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-bali.jpeg" alt="Bali">
+                                    </div>
+                                    <div class="photo__name">Bali</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-paris2.jpg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-paris2.jpg" alt="Paris">
+                                    </div>
+                                    <div class="photo__name">Paris</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery__strip__wrapper">
+                            <div class="gallery__strip three">
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-cusco.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-cusco.jpeg" alt="Cusco">
+                                    </div>
+                                    <div class="photo__name">Cusco</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-rome.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-rome.jpeg" alt="Rome">
+                                    </div>
+                                    <div class="photo__name">Rome</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-paris.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-paris.jpeg" alt="Paris">
+                                    </div>
+                                    <div class="photo__name">Paris</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-bali2.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-bali2.jpeg" alt="Bali">
+                                    </div>
+                                    <div class="photo__name">Bali</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery__strip__wrapper">
+                            <div class="gallery__strip four">
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-milan.jpeg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-milan.jpeg" alt="Milan">
+                                    </div>
+                                    <div class="photo__name">Milan</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-budapest.jpg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-budapest.jpg" alt="Budapest">
+                                    </div>
+                                    <div class="photo__name">Budapest</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-vienna.jpg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-vienna.jpg" alt="Vienna">
+                                    </div>
+                                    <div class="photo__name">Vienna</div>
+                                </div>
+                                <div class="photo" onclick="togglePhotoActive(this); openModal('https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-mexico.jpg')">
+                                    <div class="photo__image">
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/567707/gg-mexico.jpg" alt="Mexico">
+                                    </div>
+                                    <div class="photo__name">Mexico</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide" data-swiper-slide-index="2" data-logo-color="white">
+                    <video autoplay loop muted playsinline>
+                        <source src="intro2.mp4" type="video/mp4">
+                    </video>
+                    <div class="slide-overlay">
+                        <h2>Olağanüstü Anlar, Mükemmel Planlar</h2>
+                        <h3>Detaylarda saklı mükemmeliyetle unutulmaz deneyimler sunuyoruz.</h3>
+                    </div>
+                </div>
+                <div class="swiper-slide" data-swiper-slide-index="3" data-logo-color="white">
+                    <img src="resim2.jpeg" alt="Resim 2 - Lüks Etkinlik">
+                    <div class="slide-overlay">
+                        <h2>Anlarınızı Efsaneye Dönüştürüyoruz</h2>
+                        <h3>Her anınızı efsanevi bir hikayeye çeviren sihirli dokunuşlar sunuyoruz.</h3>
+                    </div>
+                </div>
+                <div class="swiper-slide footer-slide" data-swiper-slide-index="4" data-logo-color="white">
+                    <div class="footer-content">
+                        <div class="footer-main">
+                            <div class="footer-column">
+                                <h4>DAPHNE BEHAR HAKKINDA</h4>
+                                <a href="#">CLICK'LE</a>
+                            </div>
+                            <div class="footer-column">
+                                <h4>CLICK DENEYİMİ</h4>
+                                <a href="#">Kişisel Kutlamalar</a>
+                                <a href="#">Kurumsal Etkinlik</a>
+                                <a href="#">Hibrit Etkinlikler</a>
+                            </div>
+                            <div class="footer-column">
+                                <h4>YASAL</h4>
+                                <a href="#">KVKK Hakkında Aydınlatma</a>
+                                <a href="#">Bilgi Güvenliği</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination" style="left: 1rem; right: auto;"></div>
+        </div>
+        <div id="modal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="modal-content" class="modal-content" src="" alt="Full Image">
+        </div>
+        <div class="menu">
+            <button class="menu-close" onclick="toggleMenu()">&times;</button>
+            <div class="menu-content">
+                <h4>DAPHNE BEHAR HAKKINDA</h4>
+                <a href="#">CLICK'LE</a>
+                <h4>CLICK DENEYİMİ</h4>
+                <a href="#">Kişisel Kutlamalar</a>
+                <a href="#">Kurumsal Etkinlik</a>
+                <a href="#">Hibrit Etkinlikler</a>
+                <h4>YASAL</h4>
+                <a href="#">KVKK Hakkında Aydınlatma</a>
+                <a href="#">Bilgi Güvenliği</a>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        const logo = document.getElementById('main-logo');
+        const swiper = new Swiper('.swiper', {
+            direction: 'vertical',
+            loop: false,
+            effect: 'slide',
+            slidesPerView: 1,
+            spaceBetween: 0,
+            speed: 500,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            on: {
+                init: function () {
+                    const activeSlide = this.slides[this.activeIndex];
+                    const logoColor = activeSlide.getAttribute('data-logo-color');
+                    const slideIndex = parseInt(activeSlide.getAttribute('data-swiper-slide-index'));
+                    updateLogoPosition(slideIndex, logoColor);
+                },
+                slideChange: function () {
+                    const activeSlide = this.slides[this.activeIndex];
+                    const logoColor = activeSlide.getAttribute('data-logo-color');
+                    const slideIndex = parseInt(activeSlide.getAttribute('data-swiper-slide-index'));
+                    updateLogoPosition(slideIndex, logoColor);
+                    document.querySelectorAll('.slide-overlay').forEach(overlay => {
+                        overlay.style.opacity = '0';
+                        overlay.style.transform = 'translateY(50px)';
+                    });
+                    const activeOverlay = activeSlide.querySelector('.slide-overlay');
+                    if (activeOverlay) {
+                        setTimeout(() => {
+                            activeOverlay.style.opacity = '1';
+                            activeOverlay.style.transform = 'translateY(0)';
+                        }, 100);
+                    }
+                }
+            }
+        });
+
+        function updateLogoPosition(slideIndex, logoColor) {
+            if (logoColor === 'white') {
+                logo.style.filter = 'brightness(0) invert(1)';
+            } else {
+                logo.style.filter = 'none';
+            }
+
+            if (slideIndex === 0) {
+                logo.classList.remove('logo-default', 'logo-footer-center');
+                logo.classList.add('logo-first-slide');
+                logo.style.display = 'block';
+            } else if (slideIndex === 4) {
+                logo.classList.remove('logo-default', 'logo-first-slide');
+                logo.classList.add('logo-footer-center');
+                logo.style.display = 'block';
+            } else {
+                logo.classList.remove('logo-first-slide', 'logo-footer-center');
+                logo.classList.add('logo-default');
+                logo.style.display = 'block';
+            }
+        }
+
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+        });
+
+        let isScrolling = false;
+        window.addEventListener('wheel', (e) => {
+            if (isScrolling) return;
+            isScrolling = true;
+            setTimeout(() => { isScrolling = false; }, 500);
+            const activeIndex = parseInt(swiper.slides[swiper.activeIndex].getAttribute('data-swiper-slide-index'));
+            if (e.deltaY > 0) {
+                if (activeIndex < 4) {
+                    swiper.slideNext();
+                }
+            } else {
+                swiper.slidePrev();
+            }
+        }, { passive: true });
+
+        function openModal(src) {
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            modal.style.display = 'flex';
+            modalContent.src = src.includes('.mp4') ? '' : src;
+            if (src.includes('.mp4')) {
+                modalContent.innerHTML = `<video controls autoplay><source src="${src}" type="video/mp4"></video>`;
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            modal.style.display = 'none';
+            modalContent.src = '';
+            modalContent.innerHTML = '';
+            document.querySelectorAll('.photo').forEach(photo => {
+                photo.classList.remove('active');
+            });
+        }
+
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modal')) {
+                closeModal();
+            }
+        });
+
+        function toggleMenu() {
+            const hamburgerBtn = document.querySelector('.hamburger-btn');
+            const menu = document.querySelector('.menu');
+            hamburgerBtn.classList.toggle('active');
+            menu.classList.toggle('active');
+        }
+
+        function togglePhotoActive(element) {
+            document.querySelectorAll('.photo').forEach(photo => {
+                photo.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+    </script>
+</body>
+</html>
